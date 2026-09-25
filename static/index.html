@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Music Separator</title>
+</head>
+<body>
+  <h2>Upload a song to separate</h2>
+
+  <form id="uploadForm">
+    <input type="file" id="fileInput" name="file" accept="audio/*" required>
+    <button type="submit">Separate</button>
+  </form>
+
+  <div id="status"></div>
+  <div id="results"></div>
+
+  <script>
+    const form = document.getElementById("uploadForm");
+    const statusDiv = document.getElementById("status");
+    const resultsDiv = document.getElementById("results");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const fileInput = document.getElementById("fileInput");
+      if (!fileInput.files.length) return;
+
+      const formData = new FormData();
+      formData.append("file", fileInput.files[0]);
+
+      resultsDiv.innerHTML = "";
+      statusDiv.textContent = "Processing... this can take a minute.";
+
+      try {
+        const response = await fetch("/separate", {
+          method: "POST",
+          body: formData
+        });
+
+        if (!response.ok) {
+          throw new Error(`Server error: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        statusDiv.textContent = "Done.";
+
+        const list = document.createElement("ul");
+        data.stems.forEach(stem => {
+          const li = document.createElement("li");
+          const a = document.createElement("a");
+          a.href = `/download/${data.input_name}/${stem}`;
+          a.textContent = stem;
+          a.download = stem;
+          li.appendChild(a);
+          list.appendChild(li);
+        });
+        resultsDiv.appendChild(list);
+
+      } catch (err) {
+        statusDiv.textContent = "Something went wrong: " + err.message;
+      }
+    });
+  </script>
+</body>
+</html>

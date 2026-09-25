@@ -1,0 +1,26 @@
+# --- Project-specific: uploaded/generated files ---
+uploads/*
+outputs/*
+!uploads/.gitkeep
+!outputs/.gitkeep
+
+# --- Python ---
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.pytest_cache/
+
+# --- Environment/secrets ---
+.env
+
+# --- macOS ---
+.DS_Store
+
+# --- VS Code ---
+.vscode/
+
+# --- Model weights cache (if ever created inside the project folder) ---
+*.th
+*.pt
